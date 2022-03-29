@@ -1,25 +1,55 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import Search from "./compontent/Search";
+import ProductGrid from "./compontent/ProductGrid";
+import { Products } from "./Constant";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      loading:false,
+      productsList: [],
+      backupList: Products
+      //we have to make new app for this and add some advnce functionalyt 
+    };
+  }
+  componentDidMount(){
+    this.setState({
+      loading:true,
+    });
+    fetch('https://json.extendsclass.com/bin/7e69e0bc8561').then((respon)=>{
+      return respon.json();
+    })
+    .then((data)=>{
+      this.setState ( {
+        productsList: data,
+        
+      });
+    })
+    .catch((err)=>{
+      console.log(err);
+    })
+  }
+ 
+  updateproduct = (products) => {
+    this.setState({
+      backupList: products
+    });
+  };
+  render() {
+    return (
+      <div style={{ textAlign: "center" }}>
+        <h1>Myntra</h1>
+        <Search
+          productsList={this.state.productsList}
+          updateproduct={this.updateproduct}
+        />
+       {this.setState.loading ?(<h1> lodading ....</h1>):<ProductGrid productsList={this.state.backupList} />}
+        
+        {/* <ProductGrid style={{ margin: "50px" }} /> */}
+        {/* <ProductGrid /> */}
+      </div>
+    );
+  }
 }
-
 export default App;
